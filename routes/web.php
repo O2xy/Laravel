@@ -13,31 +13,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$text = 'Привет мир';
-$title = 'Моя первая страница';
+use \App\Http\Controllers\NewsController;
+use \App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use \App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use \App\Http\Controllers\CategoryController;
+use \App\Http\Controllers\WelcomeController;
+
 
 Route::get('/', function () {
     return view('welcome');
-
-Route::get('/helloWorld', function () {
-    return view('helloWorld');
 });
-//Route::get('/', function () use ($text, $title){
-//    return <<<php
-//<!doctype html>
-//<html lang="en/ru">
-//    <head>
-//        <meta charset="UTF-8">
-//        <title>$title</title>
-//    </head>
-//    <body>
-//        <h1>$text</h1>
-//        Lorem ipsum dolor sit amet.
-//    </body>
-//</html>
-//php;
 
-
-
+//for Admin
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function (){
+    Route::resource('/categories', AdminCategoryController::class);
+    Route::resource('/news', AdminNewsController::class);
 });
-// phpinfo();
+
+Route::get('/news', [NewsController::class, 'index'])
+    ->name('news');
+Route::get('/news/show/{id}', [NewsController::class, 'show'])
+    ->where('id', '\d+')
+    ->name('news.show');
+
+Route::get('/category', [CategoryController::class, 'index'])
+    ->name('category');
+Route::get('/category/show/{id}', [CategoryController::class, 'show'])
+    ->where('id', '\d+')
+    ->name('category.show');
+
+Route::get('/welcome', [WelcomeController::class, 'index']);
+
